@@ -1,5 +1,7 @@
 # trashcan
-스마트 쓰레기통 관리자 홈페이지 
+스마트 쓰레기통 관리자 홈페이지
+
+화면에 사용한 BOOTSTRAP : DASHGUM TEMPLATE
 
 **메인화면**
 ![메인](https://user-images.githubusercontent.com/57119199/67728965-a7152380-fa32-11e9-93fc-09fa91e47ba6.JPG)
