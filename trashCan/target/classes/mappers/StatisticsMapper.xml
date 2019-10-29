@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.chungrim.mapper.StatisticsMapper">
+
+	<!-- 일간 통계 mapper -->
+	
+	<!-- 일간 통계  View -->
+	<select id="dayView" resultType="statisticsVO">
+		SELECT
+			DISTINCT 
+			C.PLACE_NAME AS placeName,
+			C.PLACE_SEQ AS placeSeq,
+			SUM(A.STATISTICS_USE_NUM) AS statisticsUseNum
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		WHERE DATE(A.STATISTICS_DATE) = date(now() - interval 1 day)	
+		GROUP BY DATE(A.STATISTICS_DATE), C.PLACE_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC
+	</select>
+	
+	<!-- 일간 통계 View 어제 최대값  -->
+	<select id="dayMax" resultType="statisticsVO">
+		SELECT
+			SUM(A.STATISTICS_USE_NUM) AS max,
+			DATE(A.STATISTICS_DATE) AS date
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		WHERE DATE(A.STATISTICS_DATE) = date(now() - interval 1 day)	
+		GROUP BY DATE(A.STATISTICS_DATE), C.PLACE_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC LIMIT 1
+	</select>
+	
+	<!-- 일간 통계 View selectBox Month -->
+ 	<select id="daySelectMonth" resultType="statisticsVO">
+        SELECT
+			DISTINCT 
+			Month(A.STATISTICS_DATE) AS month
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		GROUP BY Month(A.STATISTICS_DATE), A.FK_RASPBERRYPI_IP
+    </select>
+    
+    <!-- 일간 통계 View selectBox Day -->
+ 	<select id="daySelectDay" resultType="statisticsVO">
+        SELECT
+			DISTINCT DAY(A.STATISTICS_DATE) AS day
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		WHERE month(A.STATISTICS_DATE) in (#{month})
+		GROUP BY DAY(A.STATISTICS_DATE), A.FK_RASPBERRYPI_IP
+    </select>
+    
+    <!-- 일간 통계 View SelectBox Place -->
+ 	<select id="daySelectPlace" resultType="statisticsVO">
+        SELECT
+			DISTINCT 
+			C.PLACE_NAME AS placeName,
+			C.PLACE_SEQ AS placeSeq,
+			SUM(A.STATISTICS_USE_NUM) AS statisticsUseNum
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		WHERE DATE(A.STATISTICS_DATE) LIKE #{date}
+		GROUP BY DATE(A.STATISTICS_DATE), C.PLACE_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC
+    </select>
+    
+    <!-- 일간 통계 View Place 최대값 -->
+ 	<select id="dayViewPlaceMax" resultType="statisticsVO">
+        SELECT
+			SUM(A.STATISTICS_USE_NUM) AS max
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		WHERE DATE(A.STATISTICS_DATE) LIKE #{date}
+		GROUP BY DATE(A.STATISTICS_DATE), C.PLACE_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC LIMIT 1
+    </select>
+    
+    <!-- 일간 통계 View SelectBox Detail -->
+ 	<select id="daySelectDetail" resultType="statisticsVO">
+		SELECT
+			DISTINCT 
+			D.DETAIL_NAME AS detailName,
+			D.DETAIL_SEQ AS detailSeq,
+			SUM(A.STATISTICS_USE_NUM) AS statisticsUseNum
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		WHERE DATE(A.STATISTICS_DATE) LIKE #{date} AND C.PLACE_SEQ = #{placeSeq}
+		GROUP BY DATE(A.STATISTICS_DATE), D.DETAIL_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC
+	</select>
+	
+	<!-- 일간 통계 View Detail 최대값 -->
+ 	<select id="dayViewDetailMax" resultType="statisticsVO">
+		SELECT
+			SUM(A.STATISTICS_USE_NUM) AS max
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		WHERE DATE(A.STATISTICS_DATE) LIKE #{date} AND C.PLACE_SEQ = #{placeSeq}
+		GROUP BY DATE(A.STATISTICS_DATE), D.DETAIL_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC limit 1
+	</select>
+	
+	<!-- 일간 통계 View SelectBox Floor -->
+ 	<select id="daySelectFloor" resultType="statisticsVO">
+		SELECT
+			DISTINCT 
+			E.FLOOR_NAME AS floorName,
+			E.FLOOR_SEQ AS floorSeq,
+			SUM(A.STATISTICS_USE_NUM) AS statisticsUseNum
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		JOIN FLOOR E
+			ON B.FK_FLOOR_SEQ = E.FLOOR_SEQ
+		WHERE DATE(A.STATISTICS_DATE) LIKE #{date} 
+			AND C.PLACE_SEQ = #{placeSeq} 
+			AND D.DETAIL_SEQ = #{detailSeq}
+		GROUP BY DATE(A.STATISTICS_DATE), E.FLOOR_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC
+	</select>
+	
+	<!-- 일간 통계 View Floor 최대값 -->
+ 	<select id="dayViewFloorMax" resultType="statisticsVO">
+		SELECT
+			SUM(A.STATISTICS_USE_NUM) AS max
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		JOIN FLOOR E
+			ON B.FK_FLOOR_SEQ = E.FLOOR_SEQ
+		WHERE DATE(A.STATISTICS_DATE) LIKE #{date} 
+			AND C.PLACE_SEQ = #{placeSeq} 
+			AND D.DETAIL_SEQ = #{detailSeq}
+		GROUP BY DATE(A.STATISTICS_DATE), E.FLOOR_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC LIMIT 1
+	</select>
+	
+	<!-- 일간 통계 View SelectBox Gender -->
+ 	<select id="daySelectGender" resultType="statisticsVO">
+		SELECT
+			DISTINCT 
+			F.GENDER_NAME AS genderName,
+			F.GENDER_NUM AS genderNum,
+			SUM(A.STATISTICS_USE_NUM) AS statisticsUseNum
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		JOIN FLOOR E
+			ON B.FK_FLOOR_SEQ = E.FLOOR_SEQ
+		JOIN GENDER F
+			ON B.FK_GENDER_NUM = F.GENDER_NUM
+		WHERE DATE(A.STATISTICS_DATE) LIKE #{date} 
+			AND C.PLACE_SEQ = #{placeSeq} 
+			AND D.DETAIL_SEQ = #{detailSeq}
+			AND E.FLOOR_SEQ = #{floorSeq}
+		GROUP BY DATE(A.STATISTICS_DATE), F.GENDER_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC
+	</select>
+	
+	<!-- 일간 통계 View Gender 최대값 -->
+ 	<select id="dayViewGenderMax" resultType="statisticsVO">
+		SELECT
+			SUM(A.STATISTICS_USE_NUM) AS max
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		JOIN FLOOR E
+			ON B.FK_FLOOR_SEQ = E.FLOOR_SEQ
+		JOIN GENDER F
+			ON B.FK_GENDER_NUM = F.GENDER_NUM
+		WHERE DATE(A.STATISTICS_DATE) LIKE #{date} 
+			AND C.PLACE_SEQ = #{placeSeq} 
+			AND D.DETAIL_SEQ = #{detailSeq}
+			AND E.FLOOR_SEQ = #{floorSeq}
+		GROUP BY DATE(A.STATISTICS_DATE), F.GENDER_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC LIMIT 1
+	</select>
+	
+	<!-- 일간 통계 View All -->
+ 	<select id="daySelectAll" resultType="statisticsVO">
+		SELECT
+			DISTINCT 
+			B.RASPBERRYPI_IP AS raspberrypiIp,
+			SUM(A.STATISTICS_USE_NUM) AS statisticsUseNum
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		JOIN FLOOR E
+			ON B.FK_FLOOR_SEQ = E.FLOOR_SEQ
+		JOIN GENDER F
+			ON B.FK_GENDER_NUM = F.GENDER_NUM
+		WHERE DATE(A.STATISTICS_DATE) LIKE #{date} 
+			AND C.PLACE_SEQ = #{placeSeq} 
+			AND D.DETAIL_SEQ = #{detailSeq}
+			AND E.FLOOR_SEQ = #{floorSeq}
+			AND F.GENDER_NUM = #{genderNum}
+		GROUP BY DATE(A.STATISTICS_DATE), B.RASPBERRYPI_IP
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC
+	</select>
+	
+	<!-- 일간 통계 View ALL 최대값 -->
+ 	<select id="dayViewAllMax" resultType="statisticsVO">
+		SELECT
+			SUM(A.STATISTICS_USE_NUM) AS max
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		JOIN FLOOR E
+			ON B.FK_FLOOR_SEQ = E.FLOOR_SEQ
+		JOIN GENDER F
+			ON B.FK_GENDER_NUM = F.GENDER_NUM
+		WHERE DATE(A.STATISTICS_DATE) LIKE #{date} 
+			AND C.PLACE_SEQ = #{placeSeq} 
+			AND D.DETAIL_SEQ = #{detailSeq}
+			AND E.FLOOR_SEQ = #{floorSeq}
+			AND F.GENDER_NUM = #{genderNum}
+		GROUP BY DATE(A.STATISTICS_DATE), B.RASPBERRYPI_IP
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC LIMIT 1
+	</select>
+	
+	
+	<!-- 월간 통계 mapper -->
+	
+	<!-- 월간 통계  View -->
+	<select id="monthView" resultType="statisticsVO">
+		SELECT
+			C.PLACE_NAME AS placeName,
+			C.PLACE_SEQ AS placeSeq,
+			SUM(A.STATISTICS_USE_NUM) AS statisticsUseNum
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		WHERE MONTH(A.STATISTICS_DATE) = MONTH(NOW())
+		GROUP BY MONTH(A.STATISTICS_DATE), C.PLACE_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC
+	</select>
+	
+	<!-- 월간 통계 View 최대값  -->
+	<select id="monthMax" resultType="statisticsVO">
+		SELECT
+			SUM(A.STATISTICS_USE_NUM) AS max
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		WHERE MONTH(A.STATISTICS_DATE) = MONTH(NOW())
+		GROUP BY MONTH(A.STATISTICS_DATE), C.PLACE_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC LIMIT 1
+	</select>
+    
+    <!-- 월간 통계 View SelectBox Place -->
+ 	<select id="monthSelectPlace" resultType="statisticsVO">
+        SELECT
+			C.PLACE_NAME AS placeName,
+			C.PLACE_SEQ AS placeSeq,
+			SUM(A.STATISTICS_USE_NUM) AS statisticsUseNum
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		WHERE MONTH(A.STATISTICS_DATE) LIKE #{month}
+		GROUP BY MONTH(A.STATISTICS_DATE), C.PLACE_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC
+    </select>
+    
+    <!-- 월간 통계 View Place 최대값 -->
+ 	<select id="monthViewPlaceMax" resultType="statisticsVO">
+        SELECT
+			SUM(A.STATISTICS_USE_NUM) AS max
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		WHERE MONTH(A.STATISTICS_DATE) LIKE #{month}
+		GROUP BY MONTH(A.STATISTICS_DATE), C.PLACE_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC LIMIT 1
+    </select>
+    
+    <!-- 월간 통계 View SelectBox Detail -->
+ 	<select id="monthSelectDetail" resultType="statisticsVO">
+		SELECT
+			D.DETAIL_NAME AS detailName,
+			D.DETAIL_SEQ AS detailSeq,
+			SUM(A.STATISTICS_USE_NUM) AS statisticsUseNum
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		WHERE MONTH(A.STATISTICS_DATE) LIKE #{month}
+			AND B.FK_PLACE_SEQ = #{placeSeq}
+		GROUP BY MONTH(A.STATISTICS_DATE), D.DETAIL_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC
+	</select>
+	
+	<!-- 월간 통계 View Detail 최대값 -->
+ 	<select id="monthViewDetailMax" resultType="statisticsVO">
+		SELECT
+			SUM(A.STATISTICS_USE_NUM) AS max
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		WHERE MONTH(A.STATISTICS_DATE) LIKE #{month}
+			AND B.FK_PLACE_SEQ = #{placeSeq}
+		GROUP BY MONTH(A.STATISTICS_DATE), D.DETAIL_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC LIMIT 1
+	</select>
+	
+	<!-- 월간 통계 View SelectBox Floor -->
+ 	<select id="monthSelectFloor" resultType="statisticsVO">
+		SELECT
+			E.FLOOR_NAME AS floorName,
+			E.FLOOR_SEQ AS floorSeq,
+			SUM(A.STATISTICS_USE_NUM) AS statisticsUseNum
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		JOIN FLOOR E
+			ON B.FK_FLOOR_SEQ = E.FLOOR_SEQ
+		WHERE MONTH(A.STATISTICS_DATE) LIKE #{month}
+			AND B.FK_PLACE_SEQ = #{placeSeq}
+			AND B.FK_DETAIL_SEQ = #{detailSeq}
+		GROUP BY MONTH(A.STATISTICS_DATE), E.FLOOR_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC
+	</select>
+	
+	<!-- 월간 통계 View Floor 최대값 -->
+ 	<select id="monthViewFloorMax" resultType="statisticsVO">
+		SELECT
+			SUM(A.STATISTICS_USE_NUM) AS max
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		JOIN FLOOR E
+			ON B.FK_FLOOR_SEQ = E.FLOOR_SEQ
+		WHERE MONTH(A.STATISTICS_DATE) LIKE #{month}
+			AND B.FK_PLACE_SEQ = #{placeSeq}
+			AND B.FK_DETAIL_SEQ = #{detailSeq}
+		GROUP BY MONTH(A.STATISTICS_DATE), E.FLOOR_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC LIMIT 1
+	</select>
+	
+	<!-- 월간 통계 View SelectBox Gender -->
+ 	<select id="monthSelectGender" resultType="statisticsVO">
+		SELECT
+			F.GENDER_NAME AS genderName,
+			F.GENDER_NUM AS genderNum,
+			SUM(A.STATISTICS_USE_NUM) AS statisticsUseNum
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		JOIN FLOOR E
+			ON B.FK_FLOOR_SEQ = E.FLOOR_SEQ
+		JOIN GENDER F
+			ON B.FK_GENDER_NUM = F.GENDER_NUM
+		WHERE MONTH(A.STATISTICS_DATE) LIKE #{month} 
+			AND C.PLACE_SEQ = #{placeSeq} 
+			AND D.DETAIL_SEQ = #{detailSeq}
+			AND E.FLOOR_SEQ = #{floorSeq}
+		GROUP BY MONTH(A.STATISTICS_DATE), F.GENDER_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC
+	</select>
+	
+	<!-- 월간 통계 View Gender 최대값 -->
+ 	<select id="monthViewGenderMax" resultType="statisticsVO">
+		SELECT
+			SUM(A.STATISTICS_USE_NUM) AS max
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		JOIN FLOOR E
+			ON B.FK_FLOOR_SEQ = E.FLOOR_SEQ
+		JOIN GENDER F
+			ON B.FK_GENDER_NUM = F.GENDER_NUM
+		WHERE MONTH(A.STATISTICS_DATE) LIKE #{month} 
+			AND C.PLACE_SEQ = #{placeSeq} 
+			AND D.DETAIL_SEQ = #{detailSeq}
+			AND E.FLOOR_SEQ = #{floorSeq}
+		GROUP BY MONTH(A.STATISTICS_DATE), F.GENDER_NAME
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC LIMIT 1
+	</select>
+	
+	<!-- 월간 통계 View All -->
+ 	<select id="monthSelectAll" resultType="statisticsVO">
+		SELECT
+			DISTINCT 
+			B.RASPBERRYPI_IP AS raspberrypiIp,
+			SUM(A.STATISTICS_USE_NUM) AS statisticsUseNum
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		JOIN FLOOR E
+			ON B.FK_FLOOR_SEQ = E.FLOOR_SEQ
+		JOIN GENDER F
+			ON B.FK_GENDER_NUM = F.GENDER_NUM
+		WHERE MONTH(A.STATISTICS_DATE) LIKE #{month} 
+			AND C.PLACE_SEQ = #{placeSeq} 
+			AND D.DETAIL_SEQ = #{detailSeq}
+			AND E.FLOOR_SEQ = #{floorSeq}
+			AND F.GENDER_NUM = #{genderNum}
+		GROUP BY MONTH(A.STATISTICS_DATE), B.RASPBERRYPI_IP
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC
+	</select>
+	
+	<!-- 월간 통계 View ALL 최대값 -->
+ 	<select id="monthViewAllMax" resultType="statisticsVO">
+		SELECT
+			SUM(A.STATISTICS_USE_NUM) AS max
+		FROM
+			STATISTICS A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON B.FK_PLACE_SEQ = C.PLACE_SEQ
+		JOIN DETAIL D
+			ON B.FK_DETAIL_SEQ = D.DETAIL_SEQ
+		JOIN FLOOR E
+			ON B.FK_FLOOR_SEQ = E.FLOOR_SEQ
+		JOIN GENDER F
+			ON B.FK_GENDER_NUM = F.GENDER_NUM
+		WHERE MONTH(A.STATISTICS_DATE) LIKE #{month} 
+			AND C.PLACE_SEQ = #{placeSeq} 
+			AND D.DETAIL_SEQ = #{detailSeq}
+			AND E.FLOOR_SEQ = #{floorSeq}
+			AND F.GENDER_NUM = #{genderNum}
+		GROUP BY MONTH(A.STATISTICS_DATE), B.RASPBERRYPI_IP
+		ORDER BY SUM(A.STATISTICS_USE_NUM) DESC LIMIT 1
+	</select>
+	
+	
+	<!-- 실시간 통계 mapper -->
+	
+	<!-- 실시간 통계 View -->
+	<select id="liveView" resultType="statisticsVO">
+		SELECT
+			DISTINCT
+			C.PLACE_NAME as placeName,
+			C.PLACE_SEQ as placeSeq
+		FROM
+			LIVE_STATUS_CHECK A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON C.PLACE_SEQ = B.FK_PLACE_SEQ
+	</select>
+	
+	<!-- 실시간 통계 View SelectBox Detail -->
+	<select id="liveSelectDetail" resultType="statisticsVO">
+			SELECT
+				DISTINCT
+				D.DETAIL_NAME as detailName,
+				D.DETAIL_SEQ as detailSeq
+			FROM
+				LIVE_STATUS_CHECK A
+			JOIN RASPBERRYPI B
+				ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+			JOIN PLACE C
+				ON C.PLACE_SEQ = B.FK_PLACE_SEQ
+			JOIN DETAIL D
+				ON D.DETAIL_SEQ = B.FK_DETAIL_SEQ
+			WHERE
+				B.FK_PLACE_SEQ = #{placeSeq}
+	</select>
+	
+	<!-- 실시간 통계 View SelectBox Floor -->
+	<select id="liveSelectFloor" resultType="statisticsVO">
+		SELECT
+			DISTINCT
+			E.FLOOR_NAME as floorName,
+			E.FLOOR_SEQ as floorSeq
+		FROM
+			LIVE_STATUS_CHECK A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON C.PLACE_SEQ = B.FK_PLACE_SEQ
+		JOIN DETAIL D
+			ON D.DETAIL_SEQ = B.FK_DETAIL_SEQ
+		JOIN FLOOR E
+			ON E.FLOOR_SEQ = B.FK_FLOOR_SEQ
+		WHERE B.FK_PLACE_SEQ = #{placeSeq}
+			AND B.FK_DETAIL_SEQ = #{detailSeq}
+	</select>
+	
+	<!-- 실시간 통계 View SelectBox Gender -->
+	<select id="liveSelectGender" resultType="statisticsVO">
+		SELECT
+			DISTINCT
+			F.GENDER_NAME as genderName,
+			F.GENDER_NUM as genderNum
+		FROM
+			LIVE_STATUS_CHECK A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON C.PLACE_SEQ = B.FK_PLACE_SEQ
+		JOIN DETAIL D
+			ON D.DETAIL_SEQ = B.FK_DETAIL_SEQ
+		JOIN FLOOR E
+			ON E.FLOOR_SEQ = B.FK_FLOOR_SEQ
+		JOIN GENDER F
+			ON F.GENDER_NUM= B.FK_GENDER_NUM
+		WHERE B.FK_PLACE_SEQ = #{placeSeq}
+			AND B.FK_DETAIL_SEQ = #{detailSeq}
+			AND B.FK_FLOOR_SEQ = #{floorSeq}
+	</select>
+	
+	<!-- 실시간 통계 View SelectBox All -->
+	<select id="liveSelectAll" resultType="statisticsVO">
+		SELECT
+			DISTINCT
+			B.RASPBERRYPI_IP AS raspberrypiIp,
+			A.TRASH_AMOUNT AS trashAmount
+		FROM
+			LIVE_STATUS_CHECK A
+		JOIN RASPBERRYPI B
+			ON A.FK_RASPBERRYPI_IP = B.RASPBERRYPI_IP
+		JOIN PLACE C
+			ON C.PLACE_SEQ = B.FK_PLACE_SEQ
+		JOIN DETAIL D
+			ON D.DETAIL_SEQ = B.FK_DETAIL_SEQ
+		JOIN FLOOR E
+			ON E.FLOOR_SEQ = B.FK_FLOOR_SEQ
+		JOIN GENDER F
+			ON F.GENDER_NUM= B.FK_GENDER_NUM
+		WHERE B.FK_PLACE_SEQ = #{placeSeq}
+			AND B.FK_DETAIL_SEQ = #{detailSeq}
+			AND B.FK_FLOOR_SEQ = #{floorSeq}
+			AND B.FK_GENDER_NUM = #{genderNum}
+	</select>
+</mapper>

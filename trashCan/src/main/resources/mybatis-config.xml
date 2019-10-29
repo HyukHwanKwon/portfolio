@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration 
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias type="com.chungrim.vo.AdminVO" alias="adminVO" />
+		<typeAlias type="com.chungrim.vo.RaspberrypiVO" alias="piVO" />
+		<typeAlias type="com.chungrim.vo.CleanerVO" alias="cleanerVO" />
+		<typeAlias type="com.chungrim.vo.StatisticsVO" alias="statisticsVO"/>
+		<typeAlias type="com.chungrim.vo.MappingVO" alias="mapVO"/>
+	</typeAliases>
+</configuration>

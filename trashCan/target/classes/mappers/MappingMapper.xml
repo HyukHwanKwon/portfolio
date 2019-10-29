@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chungrim.mapper.MappingMapper">
+	<!-- raspberrypi 정보 가져오기 -->
+	<select id="selectPI" resultType = "piVO">
+		select 
+			r.raspberrypi_ip as raspberrypiIp,
+			p.place_name as placeName,
+			d.detail_name as detailName,
+			f.floor_name as floorName,
+			g.gender_name as genderName 
+		from 
+			raspberrypi r,
+			place p,
+			detail d,
+			floor f,
+			gender g
+		where
+			mapping_num != 1
+		and 
+			r.fk_place_seq = p.place_seq
+		and 
+			r.fk_detail_seq = d.detail_seq
+		and 
+			r.fk_floor_seq = f.floor_seq
+		and 
+			r.fk_gender_num = g.gender_Num
+		order by 
+			p.place_name desc,
+			d.detail_name desc,
+			f.floor_name asc,
+			g.gender_name desc, 
+			r.rno limit #{value},5		
+	</select>
+	<!-- 라즈베리파이 count -->
+	
+	<select id = "piCount" resultType = "java.lang.Integer">
+		SELECT
+			ifnull(count(*),0)
+		FROM
+			raspberrypi
+		WHERE
+			mapping_num != 1
+	</select>
+	
+	<!-- cleaner list -->
+	<select id="selectClean" resultType="cleanerVO">
+		SELECT 
+        	CLEANER_ID AS cleanerId,
+        	CLEANER_NAME AS cleanerName,
+        	CLEANER_PHONE_NUM AS cleanerPhone
+         FROM
+         
+       CLEANER 
+       
+       WHERE
+       		CLEANER_STATUS = 1
+	</select>
+	
+	<!-- cleaner count -->
+	<select id="cleanCount" resultType = "java.lang.Integer">
+		SELECT
+			ifnull(count(*),0)
+		FROM
+			cleaner
+		WHERE 
+			CLEANER_STATUS = 1
+	</select>
+	
+	<!-- mapping list -->
+	<select id = "selectMap" resultType="mapVO">
+        SELECT
+			m.fk_raspberrypi_ip as raspberrypiIp,
+			m.fk_cleaner_id as cleanerId,
+			date_format(m.mapping_date,'%Y-%m-%d %T') as mappingDate,
+			c.cleaner_name as cleanerName
+		FROM
+			mapping m, cleaner c
+		WHERE
+			m.fk_cleaner_id = c.cleaner_id
+		ORDER BY
+			 m.mapping_date desc
+	</select>
+	
+	<select id="mapCount" resultType = "java.lang.Integer">
+		SELECT 
+			ifnull(count(*),0)
+		FROM
+			mapping
+	</select>
+	
+	
+	
+	<!-- mapping 등록 -->
+	<insert id="insertMap" parameterType="mapVO">
+		insert into 
+			mapping(fk_raspberrypi_ip,fk_cleaner_id)
+		values (#{raspberrypiIp},#{cleanerId})
+	</insert>
+	
+	<!-- mappingNum 0-> 1 수정 -->
+	<update id="mapComp" parameterType="String">
+		update raspberrypi
+		set mapping_num = 1
+		where raspberrypi_Ip = #{value}
+	</update>
+	
+	<!-- mapping 취소 -->
+	<delete id="deleteMap" parameterType="String">
+		DELETE
+		FROM
+			mapping
+		WHERE
+			fk_raspberrypi_ip = #{value}
+	</delete> 
+	<!-- mappingNum 1-> 0  수정 -->
+	<update id="updateMap">
+		update raspberrypi
+		set mapping_num = 0
+		where raspberrypi_Ip = #{value}
+	</update>
+	
+</mapper>

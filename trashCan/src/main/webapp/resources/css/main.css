@@ -1,0 +1,112 @@
+@charset "UTF-8";
+
+body, div, dl, dt, dd, ul, ol, li, h1, form, fieldset, button, table, th,
+	td, select, option {
+	margin: 0;
+	padding: 0;
+	font-family: 'Jua', sans-serif;
+}
+
+a {
+	text-decoration: none;
+	color: white;
+}
+
+p {
+	margin: 0;
+	height: 30px;
+	margin-bottom: 30px;
+}
+
+a:hover {
+	color: #7ac5ff;
+}
+
+body, .wrap {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 937px;
+}
+
+.contents {
+	background-color: #2E2E2E;
+	width: 1539.48px;
+	height: 937px;
+	display: inline-block;
+	position: absolute;
+	text-align: center;
+}
+
+.menu {
+	background-color: #2E2E2E;
+	width: 328.969px;
+	height: 937px;
+	display: inline-block;
+	border-right: 2px solid black;
+	color: white;
+	text-align: left;
+	padding-left: 50px;
+}
+
+.menu_header {
+	width: 300px;
+	height: 100px;
+	display: inline-block;
+	line-height: 100px;
+	font-size: 35px;
+	margin: 0;
+}
+
+.menu_div {
+	width: 350px;
+	height: 200px;
+	display: inline-block;
+	line-height: 100px;
+	font-size: 30px;
+	margin: 0;
+}
+
+.menu_mapping {
+	width: 350px;
+	height: 100px;
+	display: inline-block;
+	line-height: 100px;
+	font-size: 30px;
+	margin: 0;
+}
+
+.menu_div a, .menu_mapping a {
+	width: 350px;
+	height: 80px;
+	display: inline-block;
+	line-height: 100px;
+	font-size: 20px;
+	margin: 0;
+	color: gray;
+}
+
+.menu_div a:hover {
+	color: #7ac5ff;
+}
+
+.raspberrypiRegisterTable {
+	width: 940;
+	padding: 5px 0 5px 0;
+	margin: 0 auto;
+	margin-top: 150px;
+	color: white;
+}
+
+.raspberrypiManagementTable {
+	margin-bottom: 30px;
+	color: white;
+	text-align: center;
+}
+
+.raspberrypiContainer {
+	display: inline-block;
+	margin-top: 200px;
+	margin-left: 300px;
+	margin-right: 300px;
+}

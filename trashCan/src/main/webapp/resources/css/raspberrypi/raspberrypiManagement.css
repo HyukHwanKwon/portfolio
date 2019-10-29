@@ -1,0 +1,82 @@
+@charset "UTF-8";
+
+.raspberrypiContainer {
+	margin: 0 auto;
+	width: 50%;
+	height: 100%;
+	background-color: white;
+	padding-top: 40px;
+}
+
+.piManageCont {
+	margin : 0 auto;
+	width : 70%;
+	border : 1px solid #eee;
+	border-radius : 10px;
+	box-shadow: 0 5px 5px #f1f3f6;
+	padding-bottom : 30px;
+}
+.piListCont {
+	margin : 0 auto;
+	width : 70%;
+	padding : 50px;
+	border-radius : 10px;
+	border : 1px solid #eee;
+	box-shadow: 0 5px 5px #f1f3f6;
+}
+.piStatusCont {
+	margin : 170px auto;
+	width : 70%;
+	padding : 50px;
+	border-radius : 10px;
+	border : 1px solid #eee;
+	box-shadow: 0 5px 5px #f1f3f6;
+}
+h3 {
+	font-family: 'nanum square';
+	color: #2DB400;
+}
+
+.raspberrypiManagementTable {
+	margin: 0 auto;
+	border-collapse: collapse;
+}
+
+thead td {
+	background-color: #03cf5d;
+	color : white;
+}
+
+tbody tr:nth-child(even) td {
+	background-color : #F0FFF0;
+}
+
+tr {
+	height: 40px;
+}
+
+td {
+	width: 100px;
+	padding: 5px 0;
+	font-family: 'nanum square';
+	background-color: white;
+	border: 1px solid #f1f3f6;
+}
+
+td a {
+	text-decoration: none;
+	font-family: 'nanum square';
+	color: black;
+}
+
+td a:hover {
+	color: #2DB400;
+}
+#selectPi {
+	font-size : 13px;
+	background-color: #2DB400;
+	border: none;
+	color: white;
+	width : 60px;
+	height : 20px;
+}

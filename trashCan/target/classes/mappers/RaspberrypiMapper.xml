@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.chungrim.mapper.RaspberrypiMapper">
+ 
+ 	<!-- place 가져오기 -->
+ 	<select id="placeList" resultType="piVO">
+        SELECT
+        	PLACE_NAME AS placeName,
+        	PLACE_SEQ AS placeSeq
+        FROM
+        	PLACE
+    </select>
+    
+    <!-- detail 가져오기 -->
+ 	<select id="detailList" resultType="piVO">
+        SELECT
+        	DETAIL_NAME AS detailName,
+        	DETAIL_SEQ AS detailSeq
+        FROM
+        	DETAIL
+        WHERE
+        	FK_PLACE_SEQ = #{fkPlaceSeq}
+    </select>
+    
+    <!-- floor 가져오기 -->
+ 	<select id="floorList" resultType="piVO">
+        SELECT
+        	FLOOR_NAME AS floorName,
+        	FLOOR_SEQ AS floorSeq
+        FROM
+        	FLOOR
+    </select>
+    
+    <!-- gender 가져오기 -->
+ 	<select id="genderList" resultType="piVO">
+        SELECT
+        	GENDER_NAME AS genderName,
+        	GENDER_NUM AS genderNum
+        FROM
+        	GENDER
+    </select>
+    
+    <!-- 라즈베리파이 등록하기 -->
+ 	<insert id="insertRaspberrypi" parameterType="piVO" > 
+ 		INSERT INTO 
+ 			RASPBERRYPI (
+	 			RASPBERRYPI_IP,
+	 			FK_PLACE_SEQ,
+	 			FK_DETAIL_SEQ,
+	 			FK_FLOOR_SEQ,
+	 			FK_GENDER_NUM
+ 			) VALUES (
+ 				#{raspberrypiIp}, 
+ 				#{placeSeq}, 
+ 				#{detailSeq}, 
+ 				#{floorSeq}, 
+ 				#{genderNum}
+ 			)
+ 	</insert>
+ 	
+ 	<!-- 관리 view 라즈베리파이 정보 가져오기(전체 다 선택) -->
+ 	<select id="managementPi" resultType="piVO">
+        SELECT
+			A.RASPBERRYPI_IP AS raspberrypiIp,
+			A.RASPBERRYPI_STATUS AS raspberrypiStatus,
+		    B.PLACE_NAME AS placeName,
+		    C.DETAIL_NAME AS detailName,
+		    D.FLOOR_NAME AS floorName,
+			E.GENDER_NAME AS genderName 
+		FROM
+			RASPBERRYPI A
+		JOIN PLACE B
+			ON A.FK_PLACE_SEQ = B.PLACE_SEQ
+		JOIN DETAIL C
+			ON A.FK_DETAIL_SEQ = C.DETAIL_SEQ
+		JOIN FLOOR D
+			ON A.FK_FLOOR_SEQ = D.FLOOR_SEQ
+		JOIN GENDER E
+			ON A.FK_GENDER_NUM = E.GENDER_NUM
+		WHERE A.FK_FLOOR_SEQ = #{floorSeq} 
+			AND A.FK_DETAIL_SEQ = #{detailSeq} 
+			AND A.FK_PLACE_SEQ = #{placeSeq} 
+			AND A.FK_GENDER_NUM = #{genderNum}
+    </select>
+ 	
+ 	<!-- 관리 view 라즈베리파이 정보 가져오기(place만 선택) -->
+ 	<select id="managementPiPlace" resultType="piVO">
+        SELECT
+			A.RASPBERRYPI_IP AS raspberrypiIp,
+			A.RASPBERRYPI_STATUS AS raspberrypiStatus,
+		    B.PLACE_NAME AS placeName,
+		    C.DETAIL_NAME AS detailName,
+		    D.FLOOR_NAME AS floorName,
+			E.GENDER_NAME AS genderName 
+		FROM
+			RASPBERRYPI A
+		JOIN PLACE B
+			ON A.FK_PLACE_SEQ = B.PLACE_SEQ
+		JOIN DETAIL C
+			ON A.FK_DETAIL_SEQ = C.DETAIL_SEQ
+		JOIN FLOOR D
+			ON A.FK_FLOOR_SEQ = D.FLOOR_SEQ
+		JOIN GENDER E
+			ON A.FK_GENDER_NUM = E.GENDER_NUM
+		WHERE
+			A.FK_PLACE_SEQ = #{fkPlaceSeq}
+    </select>
+    
+    <!-- 관리 view 라즈베리파이 정보 가져오기(place, detail 선택) -->
+ 	<select id="managementPiDetail" resultType="piVO">
+        SELECT
+			A.RASPBERRYPI_IP AS raspberrypiIp,
+			A.RASPBERRYPI_STATUS AS raspberrypiStatus,
+		    B.PLACE_NAME AS placeName,
+		    C.DETAIL_NAME AS detailName,
+		    D.FLOOR_NAME AS floorName,
+			E.GENDER_NAME AS genderName 
+		FROM
+			RASPBERRYPI A
+		JOIN PLACE B
+			ON A.FK_PLACE_SEQ = B.PLACE_SEQ
+		JOIN DETAIL C
+			ON A.FK_DETAIL_SEQ = C.DETAIL_SEQ
+		JOIN FLOOR D
+			ON A.FK_FLOOR_SEQ = D.FLOOR_SEQ
+		JOIN GENDER E
+			ON A.FK_GENDER_NUM = E.GENDER_NUM
+		WHERE
+			A.FK_DETAIL_SEQ = #{detailSeq} AND A.FK_PLACE_SEQ = #{placeSeq}
+    </select>
+    
+    <!-- 관리 view 라즈베리파이 정보 가져오기(place, detail, floor 선택) -->
+ 	<select id="managementPiFloor" resultType="piVO">
+        SELECT
+			A.RASPBERRYPI_IP AS raspberrypiIp,
+			A.RASPBERRYPI_STATUS AS raspberrypiStatus,
+		    B.PLACE_NAME AS placeName,
+		    C.DETAIL_NAME AS detailName,
+		    D.FLOOR_NAME AS floorName,
+			E.GENDER_NAME AS genderName 
+		FROM
+			RASPBERRYPI A
+		JOIN PLACE B
+			ON A.FK_PLACE_SEQ = B.PLACE_SEQ
+		JOIN DETAIL C
+			ON A.FK_DETAIL_SEQ = C.DETAIL_SEQ
+		JOIN FLOOR D
+			ON A.FK_FLOOR_SEQ = D.FLOOR_SEQ
+		JOIN GENDER E
+			ON A.FK_GENDER_NUM = E.GENDER_NUM
+		WHERE A.FK_FLOOR_SEQ = #{floorSeq} 
+			AND A.FK_DETAIL_SEQ = #{detailSeq} 
+			AND A.FK_PLACE_SEQ = #{placeSeq}
+    </select>
+    
+ 	<!-- 라즈베리파이 정보 가져오기 -->
+ 	<select id="piInfomaion" resultType="piVO">
+        select
+			A.RASPBERRYPI_IP AS raspberrypiIp,
+			A.RASPBERRYPI_STATUS AS raspberrypiStatus,
+		    B.PLACE_NAME AS placeName,
+		    C.DETAIL_NAME AS detailName,
+		    D.FLOOR_NAME AS floorName,
+			E.GENDER_NAME AS genderName 
+		FROM
+			RASPBERRYPI A
+		JOIN PLACE B
+			ON A.FK_PLACE_SEQ = B.PLACE_SEQ
+		JOIN DETAIL C
+			ON A.FK_DETAIL_SEQ = C.DETAIL_SEQ
+		JOIN FLOOR D
+			ON A.FK_FLOOR_SEQ = D.FLOOR_SEQ
+		JOIN GENDER E
+			ON A.FK_GENDER_NUM = E.GENDER_NUM
+		WHERE
+			RASPBERRYPI_IP = #{ip}
+    </select>
+    
+    <!-- 라즈베리파이 상태 값 변경 -->
+    <update id="updateRaspberrypi" parameterType="piVO">
+    	UPDATE 
+    		RASPBERRYPI 
+    	SET  
+    		RASPBERRYPI_STATUS = #{raspberrypiStatus}
+    	WHERE
+    		RASPBERRYPI_IP = #{raspberrypiIp}
+    </update>
+    
+    <!-- 관리 detail 가져오기 -->
+ 	<select id="managementDetail" resultType="piVO">
+        SELECT
+        	DISTINCT
+        	B.DETAIL_SEQ AS detailSeq,
+		    B.DETAIL_NAME AS detailName
+        FROM
+        	RASPBERRYPI A
+        JOIN DETAIL B
+        	ON A.FK_DETAIL_SEQ = B.DETAIL_SEQ
+        WHERE
+        	A.FK_PLACE_SEQ = #{fkPlaceSeq}
+    </select>
+    
+    <!-- 관리 place 가져오기 -->
+ 	<select id="managementPlace" resultType="piVO">
+        SELECT
+        	DISTINCT
+        	B.PLACE_NAME AS placeName,
+        	B.PLACE_SEQ AS placeSeq
+        FROM
+        	RASPBERRYPI A
+        JOIN PLACE B
+			ON A.FK_PLACE_SEQ = B.PLACE_SEQ
+    </select>
+    
+    <!-- 관리 Floor 가져오기 -->
+ 	<select id="managementFloor" resultType="piVO">
+        SELECT
+        	DISTINCT
+        	B.FLOOR_NAME AS floorName,
+        	B.FLOOR_SEQ AS floorSeq
+        FROM
+        	RASPBERRYPI A
+        JOIN FLOOR B
+			ON A.FK_FLOOR_SEQ = B.FLOOR_SEQ
+		WHERE
+			A.FK_DETAIL_SEQ = #{fkDetailSeq}
+    </select>
+    
+    <!-- 관리 Gender 가져오기 -->
+ 	<select id="managementGender" resultType="piVO">
+        SELECT
+        	DISTINCT
+        	B.GENDER_NAME AS genderName,
+        	B.GENDER_NUM AS genderNum
+        FROM
+        	RASPBERRYPI A
+        JOIN GENDER B
+			ON A.FK_GENDER_NUM = B.GENDER_NUM
+		WHERE
+			A.FK_FLOOR_SEQ = #{floorSeq} AND A.FK_DETAIL_SEQ = #{detailSeq}
+    </select>
+</mapper>

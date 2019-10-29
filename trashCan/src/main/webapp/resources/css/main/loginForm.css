@@ -1,0 +1,38 @@
+@charset "UTF-8";
+
+.loginForm {
+	padding-top: 150px;
+	width: 50%;
+	margin: 0 auto;
+	height: 100%;
+	background-color: white;
+}
+.loginCont {
+	margin : 0 auto;
+	width : 70%;
+	border : 1px solid #eee;
+	border-radius : 10px;
+	box-shadow: 0 5px 5px #f1f3f6;
+}
+h3 {
+	font-family: 'Nanum Square';
+	color: #2DB400;
+}
+
+.loginForm div {
+	padding: 15px 0;
+}
+
+.loginForm div input {
+	width: 250px;
+	height: 35px;
+}
+
+.submit {
+	width: 254px;
+	height: 45px !important;
+	background-color: #2DB400;
+	border: none;
+	color: white;
+	font-family: 'Nanum Square';
+}
