@@ -1,8 +1,8 @@
-##사용 OS : windows10
-##사용 DB : mysql 
-##사용 언어 : java, jsp, html5, css, jquery, javascript
-##사용 Tool : STS
-##프로젝트 참여인원 : 5명 
+### 사용 OS : windows10
+### 사용 DB : mysql 
+### 사용 언어 : java, jsp, html5, css, jquery, javascript
+### 사용 Tool : STS
+### 프로젝트 참여인원 : 5명 
 
 # trashcan
 스마트 쓰레기통 관리자 홈페이지
