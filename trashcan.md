@@ -20,7 +20,8 @@
 **통계화면** //담당 
 ![일간통계](https://user-images.githubusercontent.com/57119199/67728970-aa101400-fa32-11e9-83e8-f95809f78c0d.JPG)
 ![월간통계](https://user-images.githubusercontent.com/57119199/67728973-ab414100-fa32-11e9-8d33-0f6aac161e1e.JPG)
-!
+![실시간통계](https://user-images.githubusercontent.com/57119199/75112712-b7a87400-5689-11ea-8886-b9b2831da617.png)
+
 **라즈베리파이** //담당
 ![라즈베리파이등록](https://user-images.githubusercontent.com/57119199/67728976-ac726e00-fa32-11e9-8c48-2f8cbb2c1cb6.JPG)
 ![라즈베리파이조회](https://user-images.githubusercontent.com/57119199/67728978-ad0b0480-fa32-11e9-9a6c-49d19c3a578d.JPG)
