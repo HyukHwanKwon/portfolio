@@ -6,6 +6,7 @@
 #### 사용 언어 : java, jsp, html5, css, jquery, javascript
 #### 사용 Tool : STS
 #### 프로젝트 참여인원 : 5명 
+#### 프로젝트 담당업무 : 관리자페이지를 주로 담당하며 쓰레기통 통계/관리 기능 구현
 #### 프로젝트 소개 ↓
 
 공공화장실에 쓰레기통의 양을 아두이노센서를 사용하여 실시간으로 체크하고 라즈베이파이를 이용하여 서버로 데이터를 전송합니다.
@@ -19,7 +20,7 @@
 **통계화면** //담당 
 ![일간통계](https://user-images.githubusercontent.com/57119199/67728970-aa101400-fa32-11e9-83e8-f95809f78c0d.JPG)
 ![월간통계](https://user-images.githubusercontent.com/57119199/67728973-ab414100-fa32-11e9-8d33-0f6aac161e1e.JPG)
-
+!
 **라즈베리파이** //담당
 ![라즈베리파이등록](https://user-images.githubusercontent.com/57119199/67728976-ac726e00-fa32-11e9-8c48-2f8cbb2c1cb6.JPG)
 ![라즈베리파이조회](https://user-images.githubusercontent.com/57119199/67728978-ad0b0480-fa32-11e9-9a6c-49d19c3a578d.JPG)
