@@ -1,0 +1,9 @@
+@charset "UTF-8";
+
+.wrapper{
+	margin: 0 auto;
+	text-align: center;
+}
+#top{
+	text-align: right;
+}
